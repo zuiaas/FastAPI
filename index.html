@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FastAPI</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background-color: #2c2c2c; color: white; }
+        table { border-collapse: collapse; width: 75%; }
+        th, td { border: 1px solid #bbb; padding: 8px; text-align: center; }
+        th { background-color: #444444; }
+
+        #loading {
+            font-weight: bold;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Lista de Usuários</h1>
+    <div id="loading">Carregando usuários...</div>
+
+    <table id="tabela-usuarios" style="display: none;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <!-- Dados virão aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        fetch("http://localhost:8000/usuarios")
+        .then(res => res.json())
+        .then(usuarios => {
+            const tbody = document.querySelector("#tabela-usuarios tbody");
+
+            usuarios.forEach(u => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${u.id}</td>
+                    <td>${u.nome}</td>
+                    <td>${u.email}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            setTimeout(() => {
+                document.getElementById("loading").style.display = "none";
+
+                setTimeout(() => {
+                    document.getElementById("tabela-usuarios").style.display = "table";
+                }, 300)
+            }, 300)
+        })
+        
+        .catch(err => {
+            document.getElementById("loading").textContent = "Erro ao carregar usuários.";
+            console.error("Erro ao carregar usuários:", err);
+        });
+    </script>
+
+</body>
+</html>
