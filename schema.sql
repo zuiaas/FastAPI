@@ -1,11 +1,30 @@
-create database pontest;
-use pontest;
+create database ponto;
+use ponto;
 
 CREATE TABLE usuarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(50),
-    email VARCHAR(100)
+    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    foto VARCHAR(150) DEFAULT "https://i.ibb.co/WW3BbPfY/default.png",
+    apelido VARCHAR(75) UNIQUE NOT NULL,
+    senha VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    pontuacao INT DEFAULT 0
 );
 
-INSERT INTO usuarios (nome, email) VALUES ("Josué", "josue@email.com");
-INSERT INTO usuarios (nome, email) VALUES ("Kayke", "kayke@gmail.com");
+CREATE TABLE ranking (
+    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    usuario_id INT NOT NULL UNIQUE,
+    posicao INT NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE historico (
+    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    usuario_id INT NOT NULL UNIQUE,
+    vitorias INT DEFAULT 0,
+    derrotas INT DEFAULT 0,
+    palavras INT DEFAULT 0,
+    ultima_palavra VARCHAR(5),
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
