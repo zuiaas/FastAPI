@@ -1,36 +1,29 @@
-import pymysql
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from fastapi import FastAPI
+import mysql.connector
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 def connection():
-    return pymysql.connect(
+    return mysql.connector.connect(
         host='localhost',
         user='root',
-        password='',
-        database='pontest',
-        port=3306,
-        cursorclass=pymysql.cursors.DictCursor
+        password='1201599',
+        database='ponto',
+        port=3306
     )
 
 @app.get("/usuarios")
-def usuarios():
+def get_usuarios():
     db = connection()
+    cursor = db.cursor(dictionary=True)
+
     try:
-        with db.cursor() as cursor:
-            sql = "SELECT * FROM usuarios"
-            cursor.execute(sql)
-            res = cursor.fetchall()
-            return res
+        cursor.execute("SELECT * FROM usuarios")
+        res = cursor.fetchall()
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
+        cursor.close()
         db.close()
